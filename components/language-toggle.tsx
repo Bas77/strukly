@@ -13,7 +13,7 @@ export function LanguageToggle() {
         variant="ghost"
         size="sm"
         onClick={() => setLanguage(language === "id" ? "en" : "id")}
-        className="hover:bg-primary/10 transition-colors text-xs sm:text-sm font-semibold"
+        className="hover:bg-primary cursor-pointer transition-colors text-xs sm:text-sm font-semibold"
       >
         {language === "id" ? "EN" : "ID"}
       </Button>

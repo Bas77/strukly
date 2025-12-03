@@ -1705,6 +1705,16 @@
     background-color: var(--background);
   }
 
+  .bg-background\/10 {
+    background-color: var(--background);
+  }
+
+  @supports (color: color-mix(in lab, red, red)) {
+    .bg-background\/10 {
+      background-color: color-mix(in oklab, var(--background) 10%, transparent);
+    }
+  }
+
   .bg-background\/95 {
     background-color: var(--background);
   }
@@ -3032,6 +3042,12 @@
   }
 
   @media (hover: hover) {
+    .hover\:bg-accent\!:hover {
+      background-color: var(--accent) !important;
+    }
+  }
+
+  @media (hover: hover) {
     .hover\:bg-destructive\/90:hover {
       background-color: var(--destructive);
     }
@@ -3062,14 +3078,8 @@
   }
 
   @media (hover: hover) {
-    .hover\:bg-primary\/10:hover {
+    .hover\:bg-primary:hover {
       background-color: var(--primary);
-    }
-
-    @supports (color: color-mix(in lab, red, red)) {
-      .hover\:bg-primary\/10:hover {
-        background-color: color-mix(in oklab, var(--primary) 10%, transparent);
-      }
     }
   }
 

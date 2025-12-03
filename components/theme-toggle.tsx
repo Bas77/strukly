@@ -33,7 +33,7 @@ export function ThemeToggle() {
       variant="ghost"
       size="icon"
       onClick={toggleTheme}
-      className="rounded-full w-10 h-10 flex items-center justify-center hover:bg-muted"
+      className="rounded-full w-10 h-10 flex items-center justify-center hover:bg-accent cursor-pointer"
     >
       {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
       <span className="sr-only">Toggle theme</span>
