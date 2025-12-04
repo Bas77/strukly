@@ -36,7 +36,7 @@ export default function HomePage() {
   return (
     <main className="min-h-screen bg-background">
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+      <nav className="sticky top-0 z-50 bg-background/10 backdrop-blur-sm border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14 sm:h-16">
             <div className="flex items-center gap-2">
@@ -47,19 +47,19 @@ export default function HomePage() {
             </div>
             <div className="flex items-center gap-2 sm:gap-3">
               <Link href="/revenue" className="hidden sm:block">
-                <Button variant="outline" className="bg-transparent text-xs sm:text-sm">
+                <Button variant="outline" className="bg-transparent text-xs sm:text-sm font-semibold hover:bg-accent! cursor-pointer transition-colors">
                   {t.laporan}
                 </Button>
               </Link>
               <LanguageToggle />
               <ThemeToggle />
               <Link href="/login" className="hidden sm:block">
-                <Button variant="outline" className="bg-transparent text-xs sm:text-sm">
+                <Button variant="outline" className="bg-transparent text-xs sm:text-sm hover:bg-accent! cursor-pointer">
                   {t.masuk}
                 </Button>
               </Link>
               <Link href="/register">
-                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground text-xs sm:text-sm py-1 sm:py-2">
+                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground text-xs sm:text-sm py-1 sm:py-2 cursor-pointer">
                   {t.daftar}
                 </Button>
               </Link>
@@ -91,13 +91,13 @@ export default function HomePage() {
               <Link href="/detect" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto text-sm sm:text-base"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto text-sm sm:text-base cursor-pointer"
                 >
                   {t.deteksi_struk_button} <ArrowRight className="ml-2 w-4 h-4" />
                 </Button>
               </Link>
               <Link href="/revenue" className="w-full sm:w-auto">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto bg-transparent text-sm sm:text-base">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto bg-transparent text-sm sm:text-base cursor-pointer">
                   {t.lihat_laporan}
                 </Button>
               </Link>

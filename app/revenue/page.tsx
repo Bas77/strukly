@@ -21,9 +21,10 @@ import { motion } from "framer-motion"
 import { useLanguage } from "@/lib/language-context"
 import { translations } from "@/lib/translations"
 import { LanguageToggle } from "@/components/language-toggle"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 const dailyData = [
-  { date: "Pon", revenue: 2400 },
+  { date: "Sen", revenue: 2400 },
   { date: "Sel", revenue: 2210 },
   { date: "Rab", revenue: 2290 },
   { date: "Kam", revenue: 2000 },
@@ -120,16 +121,11 @@ export default function RevenuePage() {
               <h1 className="text-lg sm:text-xl font-bold">{t.laporan_pendapatan_title}</h1>
             </div>
             <div className="flex items-center gap-2 sm:gap-3">
-              {/* Language Toggle */}
+              
+              {/* Language Toggle & Theme Toggle */}
               <LanguageToggle />
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={toggleTheme}
-                className="hover:bg-primary/10 transition-colors w-8 h-8 sm:w-10 sm:h-10"
-              >
-                {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-              </Button>
+              <ThemeToggle />
+
               <Link href="/detect">
                 <Button className="bg-primary hover:bg-primary/90 text-white text-xs sm:text-sm py-1 sm:py-2 px-2 sm:px-4">
                   {t.deteksi_struk}

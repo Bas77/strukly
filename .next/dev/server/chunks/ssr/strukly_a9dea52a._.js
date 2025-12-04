@@ -215,7 +215,7 @@ function ThemeToggle() {
         variant: "ghost",
         size: "icon",
         onClick: toggleTheme,
-        className: "rounded-full w-10 h-10 flex items-center justify-center hover:bg-muted",
+        className: "rounded-full w-10 h-10 flex items-center justify-center hover:bg-accent cursor-pointer",
         children: [
             isDark ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$strukly$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$strukly$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$sun$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Sun$3e$__["Sun"], {
                 className: "w-5 h-5"
@@ -275,7 +275,7 @@ function LanguageToggle() {
             variant: "ghost",
             size: "sm",
             onClick: ()=>setLanguage(language === "id" ? "en" : "id"),
-            className: "hover:bg-primary/10 transition-colors text-xs sm:text-sm font-semibold",
+            className: "hover:bg-primary cursor-pointer transition-colors text-xs sm:text-sm font-semibold",
             children: language === "id" ? "EN" : "ID"
         }, void 0, false, {
             fileName: "[project]/strukly/components/language-toggle.tsx",
@@ -497,7 +497,7 @@ function HomePage() {
         className: "min-h-screen bg-background",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$strukly$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("nav", {
-                className: "sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border",
+                className: "sticky top-0 z-50 bg-background/10 backdrop-blur-sm border-b border-border",
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$strukly$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$strukly$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -543,7 +543,7 @@ function HomePage() {
                                         className: "hidden sm:block",
                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$strukly$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$strukly$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
                                             variant: "outline",
-                                            className: "bg-transparent text-xs sm:text-sm",
+                                            className: "bg-transparent text-xs sm:text-sm font-semibold hover:bg-accent! cursor-pointer transition-colors",
                                             children: t.laporan
                                         }, void 0, false, {
                                             fileName: "[project]/strukly/app/page.tsx",
@@ -570,7 +570,7 @@ function HomePage() {
                                         className: "hidden sm:block",
                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$strukly$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$strukly$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
                                             variant: "outline",
-                                            className: "bg-transparent text-xs sm:text-sm",
+                                            className: "bg-transparent text-xs sm:text-sm hover:bg-accent! cursor-pointer",
                                             children: t.masuk
                                         }, void 0, false, {
                                             fileName: "[project]/strukly/app/page.tsx",
@@ -585,7 +585,7 @@ function HomePage() {
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$strukly$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$strukly$2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
                                         href: "/register",
                                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$strukly$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$strukly$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
-                                            className: "bg-primary hover:bg-primary/90 text-primary-foreground text-xs sm:text-sm py-1 sm:py-2",
+                                            className: "bg-primary hover:bg-primary/90 text-primary-foreground text-xs sm:text-sm py-1 sm:py-2 cursor-pointer",
                                             children: t.daftar
                                         }, void 0, false, {
                                             fileName: "[project]/strukly/app/page.tsx",
@@ -677,7 +677,7 @@ function HomePage() {
                                                 className: "w-full sm:w-auto",
                                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$strukly$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$strukly$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
                                                     size: "lg",
-                                                    className: "bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto text-sm sm:text-base",
+                                                    className: "bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto text-sm sm:text-base cursor-pointer",
                                                     children: [
                                                         t.deteksi_struk_button,
                                                         " ",
@@ -705,7 +705,7 @@ function HomePage() {
                                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$strukly$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$strukly$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
                                                     size: "lg",
                                                     variant: "outline",
-                                                    className: "w-full sm:w-auto bg-transparent text-sm sm:text-base",
+                                                    className: "w-full sm:w-auto bg-transparent text-sm sm:text-base cursor-pointer",
                                                     children: t.lihat_laporan
                                                 }, void 0, false, {
                                                     fileName: "[project]/strukly/app/page.tsx",
