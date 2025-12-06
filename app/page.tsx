@@ -14,12 +14,17 @@ import { useEffect, useState } from "react"
 import { onAuthStateChanged } from "firebase/auth"
 import { auth } from "@/lib/firebase" // Import Firebase auth
 import { UserNav } from "@/components/user-nav"
+import { MobileNav } from "@/components/mobile-nav"
+import { MobileSettings } from "@/components/mobile-settings"
+import { Chatbot } from "@/components/chatbot"
 
 export default function HomePage() {
   const { language } = useLanguage()
   const t = translations[language]
   const [isLoggedIn, setIsLoggedIn] = useState(false) // State untuk login
   const [user, setUser] = useState(null) // State untuk data pengguna
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false)
+  const [isMobileSettingsOpen, setIsMobileSettingsOpen] = useState(false)
 
   useEffect(() => {
     // Pantau perubahan status login
@@ -67,8 +72,10 @@ export default function HomePage() {
               </div>
               <h1 className="text-lg sm:text-xl font-bold text-foreground">Strukly</h1>
             </div>
-            <div className="flex items-center gap-2 sm:gap-3">
-              <Link href="/revenue" className="hidden sm:block">
+            
+            {/* Desktop Navigation */}
+            <div className="hidden sm:flex items-center gap-2 sm:gap-3">
+              <Link href="/revenue">
                 <Button variant="outline" className="bg-transparent text-xs sm:text-sm font-semibold hover:bg-accent! cursor-pointer transition-colors">
                   {t.laporan}
                 </Button>
@@ -79,7 +86,7 @@ export default function HomePage() {
                 <UserNav />
               ) : (
                 <>
-                  <Link href="/login" className="hidden sm:block">
+                  <Link href="/login">
                     <Button variant="outline" className="bg-transparent text-xs sm:text-sm hover:bg-accent! cursor-pointer">
                       {t.masuk}
                     </Button>
@@ -91,6 +98,12 @@ export default function HomePage() {
                   </Link>
                 </>
               )}
+            </div>
+
+            {/* Mobile Navigation */}
+            <div className="sm:hidden flex items-center gap-2">
+              <MobileSettings isOpen={isMobileSettingsOpen} setIsOpen={setIsMobileSettingsOpen} setNavOpen={setIsMobileNavOpen} />
+              <MobileNav isOpen={isMobileNavOpen} setIsOpen={setIsMobileNavOpen} setSettingsOpen={setIsMobileSettingsOpen} />
             </div>
           </div>
         </div>
@@ -225,6 +238,9 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
+
+      {/* Chatbot */}
+      <Chatbot />
     </main>
   )
 }

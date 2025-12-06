@@ -7,7 +7,8 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Camera, Edit2, Plus, Trash2, Save, Loader2 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
-import { detectReceiptOCR, autoCorrectItemName } from "@/components/ocr-detector"
+import { detectReceiptOCR } from "@/lib/ocr-client"
+import { autoCorrectItemName } from "@/components/ocr-detector"
 import { useLanguage } from "@/lib/language-context"
 import { translations } from "@/lib/translations"
 import { LanguageToggle } from "@/components/language-toggle"
@@ -35,7 +36,6 @@ interface Receipt {
 }
 
 export default function DetectPage() {
-    const [isDragActive, setIsDragActive] = useState(false);
   const { language } = useLanguage()
   const t = translations[language]
   const { user, loading } = useAuth()
@@ -51,6 +51,7 @@ export default function DetectPage() {
   const [isSaving, setIsSaving] = useState(false)
   const [uploadProgress, setUploadProgress] = useState<number | null>(null)
   const [merchant, setMerchant] = useState("")
+  const [isDragActive, setIsDragActive] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
