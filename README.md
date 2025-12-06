@@ -1,73 +1,46 @@
-# React + TypeScript + Vite
+# **Strukly**
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Strukly adalah platform web berbasis **OCR (Optical Character Recognition)** yang secara otomatis mengekstraksi data dari foto struk/faktur dan mengubahnya menjadi **dashboard laporan interaktif**. Pengguna cukup mengunggah gambar struk — Strukly akan membaca, membersihkan, menstandarkan, dan menampilkan insight tanpa input manual.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Fitur Utama
 
-## React Compiler
+### 📸 **1. OCR Ekstraksi Data Otomatis**
+- Upload gambar struk (JPG/PNG/PDF)
+- Pembacaan teks, tanggal, total harga, dan item pembelian
+- Preprocessing otomatis (deskew, denoise, contrast enhancement)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 📊 **2. Dashboard Laporan Real-Time**
+- Visualisasi otomatis (bar chart, pie chart, summary)
+- Tabel transaksi lengkap  
+- Insight otomatis (pengeluaran terbesar, kategori dominan)
 
-## Expanding the ESLint configuration
+### 🧠 **3. Auto-Standardization & Cleaning**
+- Normalisasi format tanggal, harga, dan kategori
+- Deteksi duplikasi struk
+- Klasifikasi kategori item berbasis ML ringan
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 🌐 **4. Web-Based & Mobile-Friendly**
+- Akses dari laptop maupun ponsel
+- Tidak memerlukan instalasi tambahan
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 🛠️ Tech Stack
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+**Frontend**
+- React / Next.js  
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+**Backend**
+- Node.js / Express  
+- OCR (Gemini OCR)  
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+**Database**
+- Firebase
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+**Deployment**
+- Vercel  
+
+---
+
