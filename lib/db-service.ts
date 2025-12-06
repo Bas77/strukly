@@ -158,20 +158,31 @@ export async function updateUserProfile(userId: string, updates: Partial<UserPro
 
 // Revenue statistics
 export async function getRevenueStats(userId: string, startDate?: Date, endDate?: Date): Promise<RevenueStats> {
-  let q = query(collection(db, "receipts"), where("userId", "==", userId), orderBy("date", "desc"));
+  let q = query(
+    collection(db, "receipts"), 
+    where("userId", "==", userId), 
+    orderBy("createdAt", "desc")
+  );
 
   if (startDate && endDate) {
+    // Convert dates to Timestamps for proper Firestore comparison
+    const startTimestamp = Timestamp.fromDate(startDate);
+    const endTimestamp = Timestamp.fromDate(endDate);
+    
     q = query(
       collection(db, "receipts"),
       where("userId", "==", userId),
-      where("date", ">=", startDate.toISOString().split("T")[0]),
-      where("date", "<=", endDate.toISOString().split("T")[0]),
-      orderBy("date", "desc")
+      where("createdAt", ">=", startTimestamp),
+      where("createdAt", "<=", endTimestamp),
+      orderBy("createdAt", "desc")
     );
   }
 
   const querySnapshot = await getDocs(q);
-  const receipts = querySnapshot.docs.map((doc) => doc.data()) as Receipt[];
+  const receipts = querySnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as Receipt[];
 
   const totalRevenue = receipts.reduce((sum, receipt) => sum + receipt.totalAmount, 0);
   const totalReceipts = receipts.length;
@@ -179,28 +190,53 @@ export async function getRevenueStats(userId: string, startDate?: Date, endDate?
 
   const monthlyRevenue: { [key: string]: number } = {};
   const dailyRevenue: { [key: string]: number } = {};
+  const hourlyRevenue: { [key: string]: number } = {};
   const categoryBreakdown: { [key: string]: number } = {};
+  const merchantBreakdown: { [key: string]: number } = {};
 
   receipts.forEach((receipt) => {
-    const date = new Date(receipt.date);
-    const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-    const dayKey = receipt.date;
+    // Use createdAt to generate date keys
+    let receiptDate: Date;
+    
+    // Handle both Timestamp objects and string dates
+    const createdAtValue = receipt.createdAt as any;
+    
+    if (createdAtValue && typeof createdAtValue === 'object' && 'toDate' in createdAtValue) {
+      // It's a Timestamp object
+      receiptDate = createdAtValue.toDate();
+    } else if (typeof createdAtValue === 'string') {
+      // It's a string date
+      receiptDate = new Date(createdAtValue);
+    } else {
+      receiptDate = new Date();
+    }
+
+    const monthKey = `${receiptDate.getFullYear()}-${String(receiptDate.getMonth() + 1).padStart(2, "0")}`;
+    const dayKey = receiptDate.toISOString().split("T")[0];
+    const hourKey = receiptDate.toISOString().substring(0, 13); // YYYY-MM-DDTHH
 
     monthlyRevenue[monthKey] = (monthlyRevenue[monthKey] || 0) + receipt.totalAmount;
     dailyRevenue[dayKey] = (dailyRevenue[dayKey] || 0) + receipt.totalAmount;
+    hourlyRevenue[hourKey] = (hourlyRevenue[hourKey] || 0) + receipt.totalAmount;
 
     if (receipt.category) {
       categoryBreakdown[receipt.category] = (categoryBreakdown[receipt.category] || 0) + receipt.totalAmount;
     }
+
+    // Add merchant breakdown
+    const merchantName = receipt.storeName || "Unknown Merchant";
+    merchantBreakdown[merchantName] = (merchantBreakdown[merchantName] || 0) + receipt.totalAmount;
   });
 
   return {
     totalRevenue,
     totalReceipts,
     averageTransaction,
+    hourlyRevenue,
     monthlyRevenue,
     dailyRevenue,
     categoryBreakdown,
+    merchantBreakdown,
   };
 }
 

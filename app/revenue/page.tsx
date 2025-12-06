@@ -11,11 +11,11 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  AreaChart,
+  Area,
   PieChart,
   Pie,
   Cell,
-  AreaChart,
-  Area,
 } from "recharts"
 import { motion } from "framer-motion"
 import { useLanguage } from "@/lib/language-context"
@@ -27,22 +27,6 @@ import { getUserReceipts, getRevenueStats as fetchRevenueStats } from "@/lib/db-
 import { Receipt, RevenueStats } from "@/lib/types"
 import { UserNav } from "@/components/user-nav"
 import { ThemeToggle } from "@/components/theme-toggle"
-
-const dailyData = [
-  { date: "Sen", revenue: 2400 },
-  { date: "Sel", revenue: 2210 },
-  { date: "Rab", revenue: 2290 },
-  { date: "Kam", revenue: 2000 },
-  { date: "Jum", revenue: 2181 },
-  { date: "Sab", revenue: 2500 },
-  { date: "Min", revenue: 2100 },
-]
-
-const categoryData = [
-  { name: "Makanan", value: 35, revenue: 10500000 },
-  { name: "Minuman", value: 25, revenue: 7500000 },
-  { name: "Lainnya", value: 40, revenue: 12000000 },
-]
 
 // Green shade palette: different shades of #48d390
 const CATEGORY_COLORS = [
@@ -60,7 +44,7 @@ export default function RevenuePage() {
   const [filter, setFilter] = useState("today")
   const [isDark, setIsDark] = useState(false)
   const [mounted, setMounted] = useState(false)
-  const [activeCategoryIndex, setActiveCategoryIndex] = useState<number | null>(null)
+  const [activeMerchantIndex, setActiveMerchantIndex] = useState<number | null>(null)
   const [receipts, setReceipts] = useState<Receipt[]>([])
   const [revenueStats, setRevenueStats] = useState<RevenueStats | null>(null)
   const [loading, setLoading] = useState(true)
@@ -145,21 +129,80 @@ export default function RevenuePage() {
     }
   }
 
-  const dailyData = revenueStats
-    ? Object.entries(revenueStats.dailyRevenue)
-        .slice(-7)
-        .map(([date, revenue]) => ({
-          date: new Date(date).toLocaleDateString(language === "id" ? "id-ID" : "en-US", { weekday: "short" }),
-          revenue,
-        }))
-    : []
+  const getChartData = () => {
+    if (!revenueStats) return []
 
-  const categoryData = revenueStats
-    ? Object.entries(revenueStats.categoryBreakdown).map(([name, revenue]) => {
-        const total = Object.values(revenueStats.categoryBreakdown).reduce((a, b) => a + b, 0)
-        const percentage = total > 0 ? Math.round((revenue / total) * 100) : 0
-        return { name, value: percentage, revenue }
-      })
+    switch (filter) {
+      case "today": {
+        // Show hourly data for today
+        return Object.entries(revenueStats.hourlyRevenue)
+          .sort(([a], [b]) => a.localeCompare(b))
+          .map(([hour, revenue]) => {
+            const date = new Date(hour + ":00:00");
+            const timeStr = date.toLocaleTimeString(language === "id" ? "id-ID" : "en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false,
+            });
+            return { date: timeStr, revenue };
+          });
+      }
+      case "week": {
+        // Show daily data for the week
+        return Object.entries(revenueStats.dailyRevenue)
+          .sort(([a], [b]) => a.localeCompare(b))
+          .slice(-7)
+          .map(([date, revenue]) => ({
+            date: new Date(date).toLocaleDateString(language === "id" ? "id-ID" : "en-US", { weekday: "short" }),
+            revenue,
+          }));
+      }
+      case "month": {
+        // Show weekly aggregated data for the month
+        const weeklyData: { [key: string]: number } = {};
+        Object.entries(revenueStats.dailyRevenue)
+          .sort(([a], [b]) => a.localeCompare(b))
+          .forEach(([date, revenue]) => {
+            const dateObj = new Date(date);
+            const monthStart = new Date(dateObj.getFullYear(), dateObj.getMonth(), 1);
+            const dayOfMonth = dateObj.getDate();
+            const week = Math.ceil(dayOfMonth / 7);
+            const weekKey = `week${week}`;
+            weeklyData[weekKey] = (weeklyData[weekKey] || 0) + revenue;
+          });
+        
+        return Object.entries(weeklyData).map(([week, revenue]) => ({
+          date: language === "id" ? `${week.replace("week", "Minggu ")}` : `Week ${week.replace("week", "")}`,
+          revenue,
+        }));
+      }
+      case "year": {
+        // Show monthly aggregated data for the year
+        const monthlyData: { [key: string]: number } = {};
+        Object.entries(revenueStats.dailyRevenue)
+          .sort(([a], [b]) => a.localeCompare(b))
+          .forEach(([date, revenue]) => {
+            const dateObj = new Date(date);
+            const monthKey = dateObj.toLocaleDateString(language === "id" ? "id-ID" : "en-US", { month: "short" });
+            monthlyData[monthKey] = (monthlyData[monthKey] || 0) + revenue;
+          });
+        
+        return Object.entries(monthlyData).map(([month, revenue]) => ({
+          date: month,
+          revenue,
+        }));
+      }
+      default:
+        return [];
+    }
+  };
+
+  const chartData = getChartData();
+
+  const merchantData = revenueStats
+    ? Object.entries(revenueStats.merchantBreakdown)
+        .sort(([, a], [, b]) => b - a) // Sort by revenue descending
+        .map(([name, revenue]) => ({ name, revenue }))
     : []
 
   if (authLoading || loading) {
@@ -300,7 +343,7 @@ export default function RevenuePage() {
               </h3>
               <div className="w-full h-64 md:h-80">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={dailyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                     <defs>
                       <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="#48d390" stopOpacity={0.3} />
@@ -309,7 +352,18 @@ export default function RevenuePage() {
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" opacity={0.3} />
                     <XAxis dataKey="date" stroke="var(--color-muted-foreground)" style={{ fontSize: "12px" }} />
-                    <YAxis stroke="var(--color-muted-foreground)" style={{ fontSize: "12px" }} />
+                    <YAxis 
+                      stroke="var(--color-muted-foreground)" 
+                      style={{ fontSize: "12px" }}
+                      tickFormatter={(value) => {
+                        if (value >= 1000000) {
+                          return `Rp ${(value / 1000000).toFixed(0)}M`;
+                        } else if (value >= 1000) {
+                          return `Rp ${(value / 1000).toFixed(0)}K`;
+                        }
+                        return `Rp ${value}`;
+                      }}
+                    />
                     <Tooltip
                       contentStyle={{
                         backgroundColor: "var(--color-card)",
@@ -340,30 +394,33 @@ export default function RevenuePage() {
             <Card className="border-border/50 p-4 md:p-6 bg-gradient-to-br from-card/80 to-card">
               <h3 className="text-base md:text-lg font-semibold mb-4 flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-primary flex-shrink-0" />
-                {t.kategori}
+                {language === "id" ? "Merchant Terpopuler" : "Top Merchants"}
               </h3>
               <div className="w-full space-y-4">
-                {categoryData.length > 0 ? (
+                {merchantData.length > 0 ? (
                   <>
                     <div className="h-56 md:h-64">
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                           <Pie
-                            data={categoryData}
+                            data={merchantData.map((item, idx) => ({
+                              ...item,
+                              percentage: Math.round((item.revenue / merchantData.reduce((sum, m) => sum + m.revenue, 0)) * 100)
+                            }))}
                             cx="50%"
                             cy="50%"
                             innerRadius={50}
                             outerRadius={80}
                             paddingAngle={4}
-                            dataKey="value"
-                            onMouseEnter={(_, index) => setActiveCategoryIndex(index)}
-                            onMouseLeave={() => setActiveCategoryIndex(null)}
+                            dataKey="revenue"
+                            onMouseEnter={(_, index) => setActiveMerchantIndex(index)}
+                            onMouseLeave={() => setActiveMerchantIndex(null)}
                           >
-                            {categoryData.map((entry, index) => (
+                            {merchantData.map((_, index) => (
                               <Cell
                                 key={`cell-${index}`}
                                 fill={CATEGORY_COLORS[index % CATEGORY_COLORS.length]}
-                                opacity={activeCategoryIndex === null || activeCategoryIndex === index ? 1 : 0.5}
+                                opacity={activeMerchantIndex === null || activeMerchantIndex === index ? 1 : 0.5}
                                 style={{ cursor: "pointer", transition: "opacity 0.3s ease" }}
                               />
                             ))}
@@ -375,7 +432,7 @@ export default function RevenuePage() {
                                 return (
                                   <div className="bg-card border border-border rounded-lg p-3 shadow-lg">
                                     <p className="font-semibold text-sm">{data.name}</p>
-                                    <p className="text-xs text-muted-foreground">{data.value}%</p>
+                                    <p className="text-xs text-muted-foreground">{data.percentage}%</p>
                                     <p className="text-sm font-bold text-primary mt-1">
                                       Rp {data.revenue.toLocaleString("id-ID")}
                                     </p>
@@ -390,35 +447,39 @@ export default function RevenuePage() {
                     </div>
 
                     <div className="space-y-2 border-t border-border pt-4">
-                      {categoryData.map((item, idx) => (
-                        <motion.div
-                          key={idx}
-                          className="flex items-center justify-between text-xs sm:text-sm p-2 rounded-lg cursor-pointer transition-colors hover:bg-muted/50"
-                          onMouseEnter={() => setActiveCategoryIndex(idx)}
-                          onMouseLeave={() => setActiveCategoryIndex(null)}
-                          whileHover={{ x: 4 }}
-                        >
-                          <div className="flex items-center gap-2">
-                            <div
-                              className="w-3 h-3 rounded-full flex-shrink-0"
-                              style={{ backgroundColor: CATEGORY_COLORS[idx] }}
-                            />
-                            <span className="text-muted-foreground">{item.name}</span>
-                          </div>
-                          <div className="flex flex-col items-end gap-1">
-                            <span className="font-semibold">{item.value}%</span>
-                            {activeCategoryIndex === idx && (
-                              <motion.span
-                                className="text-xs font-bold text-primary"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                              >
-                                Rp {item.revenue.toLocaleString("id-ID")}
-                              </motion.span>
-                            )}
-                          </div>
-                        </motion.div>
-                      ))}
+                      {merchantData.map((item, idx) => {
+                        const total = merchantData.reduce((sum, m) => sum + m.revenue, 0)
+                        const percentage = Math.round((item.revenue / total) * 100)
+                        return (
+                          <motion.div
+                            key={idx}
+                            className="flex items-center justify-between text-xs sm:text-sm p-2 rounded-lg cursor-pointer transition-colors hover:bg-muted/50"
+                            onMouseEnter={() => setActiveMerchantIndex(idx)}
+                            onMouseLeave={() => setActiveMerchantIndex(null)}
+                            whileHover={{ x: 4 }}
+                          >
+                            <div className="flex items-center gap-2 flex-1 min-w-0">
+                              <div
+                                className="w-3 h-3 rounded-full flex-shrink-0"
+                                style={{ backgroundColor: CATEGORY_COLORS[idx % CATEGORY_COLORS.length] }}
+                              />
+                              <span className="text-muted-foreground truncate">{item.name}</span>
+                            </div>
+                            <div className="flex flex-col items-end gap-1">
+                              <span className="font-semibold">{percentage}%</span>
+                              {activeMerchantIndex === idx && (
+                                <motion.span
+                                  className="text-xs font-bold text-primary"
+                                  initial={{ opacity: 0 }}
+                                  animate={{ opacity: 1 }}
+                                >
+                                  Rp {item.revenue.toLocaleString("id-ID")}
+                                </motion.span>
+                              )}
+                            </div>
+                          </motion.div>
+                        )
+                      })}
                     </div>
                   </>
                 ) : (

@@ -52,6 +52,7 @@ export default function DetectPage() {
   const [uploadProgress, setUploadProgress] = useState<number | null>(null)
   const [merchant, setMerchant] = useState("")
   const [isDragActive, setIsDragActive] = useState(false)
+  const [saveImageToStorage, setSaveImageToStorage] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -84,7 +85,7 @@ export default function DetectPage() {
         try {
           const result = await detectReceiptOCR(reader.result as string)
           setItems(
-            result.items.map((item, idx) => ({
+            result.items.map((item: { name: string; quantity: any; price: any }, idx: { toString: () => any }) => ({
               id: idx.toString(),
               name: autoCorrectItemName(item.name),
               quantity: item.quantity,
@@ -133,16 +134,20 @@ export default function DetectPage() {
   const totalRevenue = items.reduce((sum, item) => sum + item.quantity * item.price, 0)
 
   const handleSaveReceipt = async () => {
-    if (items.length === 0 || !user || !imageFile) return
+    if (items.length === 0 || !user) return
 
     setIsSaving(true)
 
     try {
-      // Upload image to Firebase Storage with progress callback
-      setUploadProgress(0)
-      const imageUrl = await uploadReceiptImage(imageFile, user.uid, (p) => setUploadProgress(p))
+      // Optionally upload image to Firebase Storage
+      let imageUrl: string | null = null
+      if (saveImageToStorage && imageFile) {
+        setUploadProgress(0)
+        imageUrl = await uploadReceiptImage(imageFile, user.uid, (p) => setUploadProgress(p))
+      }
 
-      // Save receipt to Firestore
+      // Save receipt to Firestore with processed data (items, qty, total)
+      // Image URL is optional and only stored if user chose to save the image
       await createReceipt({
         userId: user.uid,
         imageUrl,
@@ -229,7 +234,7 @@ export default function DetectPage() {
                     setIsProcessing(true);
                     try {
                       const result = await detectReceiptOCR(reader.result as string);
-                      setItems(result.items.map((item, idx) => ({
+                      setItems(result.items.map((item: { name: string; quantity: any; price: any }, idx: { toString: () => any }) => ({
                         id: idx.toString(),
                         name: autoCorrectItemName(item.name),
                         quantity: item.quantity,
@@ -422,6 +427,7 @@ export default function DetectPage() {
                     <span className="text-lg font-semibold">{t.total}</span>
                     <span className="text-2xl font-bold text-primary">Rp {totalRevenue.toLocaleString("id-ID")}</span>
                   </div>
+
                   <Button
                     className="w-full bg-primary hover:bg-primary/80 text-white cursor-pointer"
                     onClick={handleSaveReceipt}

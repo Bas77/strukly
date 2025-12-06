@@ -1,7 +1,7 @@
 export interface Receipt {
   id: string;
   userId: string;
-  imageUrl: string;
+  imageUrl: string | null;
   storeName: string;
   date: string;
   totalAmount: number;
@@ -32,7 +32,9 @@ export interface RevenueStats {
   totalRevenue: number;
   totalReceipts: number;
   averageTransaction: number;
+  hourlyRevenue: { [key: string]: number };
   monthlyRevenue: { [key: string]: number };
   dailyRevenue: { [key: string]: number };
   categoryBreakdown: { [key: string]: number };
+  merchantBreakdown: { [key: string]: number };
 }
