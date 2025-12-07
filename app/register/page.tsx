@@ -290,12 +290,6 @@ export default function RegisterPage() {
                 </motion.div>
               </form>
             </Card>
-            {diag && (
-              <div className="mt-4 p-3 bg-muted/10 border border-border rounded text-xs">
-                <strong>Firebase diagnostics (masked):</strong>
-                <pre className="text-xs mt-2 overflow-auto max-h-40">{JSON.stringify(diag, null, 2)}</pre>
-              </div>
-            )}
           </motion.div>
 
           {/* Sign In Link */}

@@ -1,65 +1,60 @@
 // app/api/chat/route.ts
 import { NextResponse } from "next/server";
 
-const API_KEY = process.env.GEMINI_API_KEY;
-// Gunakan model yang sama karena terbukti tersedia di akunmu
-const MODEL_NAME = "gemini-2.0-flash";
-const MODEL_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent`;
+const API_KEY = process.env.KOLOSAL_API_KEY;
+
+// PERBAIKAN: Gunakan ID Model yang sesuai dengan akunmu (Llama 4 Maverick)
+const MODEL_NAME = "meta-llama/llama-4-maverick-17b-128e-instruct";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { message, history } = body; // Menerima pesan & history dari frontend
+    const { message, history } = body;
 
     if (!message) {
       return NextResponse.json({ error: "Message required" }, { status: 400 });
     }
 
-    // 1. Instruksi kepribadian Bot
-    const systemPrompt = {
-      role: "user",
-      parts: [{ text: `
-        You are Strukly AI, a helpful assistant for a receipt management app.
-        Language: Indonesian (Bahasa Indonesia).
-        Tone: Friendly, concise, helpful.
-        Capabilities: Help users upload receipts, explain features, and troubleshoot errors.
-      `}]
+    const systemMessage = {
+      role: "system",
+      content: "Kamu adalah Strukly AI, asisten aplikasi keuangan. Jawab dengan Bahasa Indonesia yang singkat, ramah, dan membantu."
     };
 
-    const modelAck = {
-      role: "model",
-      parts: [{ text: "Siap! Saya Strukly AI yang akan membantu pengguna dengan ramah." }]
-    };
+    const formattedHistory = history ? history.map((msg: any) => ({
+      role: msg.sender === "user" ? "user" : "assistant",
+      content: msg.text
+    })) : [];
 
-    // 2. Format History Chat (ubah format frontend ke format Gemini)
-    const formattedHistory = history.map((msg: any) => ({
-      role: msg.sender === "user" ? "user" : "model",
-      parts: [{ text: msg.text }]
-    }));
-
-    // 3. Gabungkan semua konteks
-    const contents = [
-      systemPrompt,
-      modelAck,
+    const messages = [
+      systemMessage,
       ...formattedHistory,
-      { role: "user", parts: [{ text: message }] }
+      { role: "user", content: message }
     ];
 
-    // 4. Kirim ke Gemini
-    const res = await fetch(`${MODEL_URL}?key=${API_KEY}`, {
+    console.log("Mengirim Chat ke Kolosal dengan Model:", MODEL_NAME);
+
+    const response = await fetch("https://api.kolosal.ai/v1/chat/completions", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ contents })
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${API_KEY}`
+      },
+      body: JSON.stringify({
+        model: MODEL_NAME,
+        messages: messages,
+        max_tokens: 500,
+        temperature: 0.7
+      })
     });
 
-    if (!res.ok) {
-      const errorText = await res.text();
-      console.error("Chat API Error:", errorText);
-      return NextResponse.json({ response: "Maaf, saya sedang pusing. Coba lagi nanti ya." }, { status: 500 });
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Kolosal Chat Error:", errorText);
+      return NextResponse.json({ response: "Maaf, server AI sedang sibuk." }, { status: 500 });
     }
 
-    const data = await res.json();
-    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    const data = await response.json();
+    const reply = data.choices?.[0]?.message?.content || "Maaf, tidak ada balasan.";
 
     return NextResponse.json({ response: reply });
 
