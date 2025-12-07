@@ -1,6 +1,7 @@
 # **Strukly**
 
 Strukly adalah platform web berbasis **OCR (Optical Character Recognition)** yang secara otomatis mengekstraksi data dari foto struk/faktur dan mengubahnya menjadi **dashboard laporan interaktif**. Pengguna cukup mengunggah gambar struk — Strukly akan membaca, membersihkan, menstandarkan, dan menampilkan insight tanpa input manual.
+<img width="1902" height="915" alt="image" src="https://github.com/user-attachments/assets/092cfe8c-1b3b-47c0-911b-badcafbf75c4" />
 
 ---
 
