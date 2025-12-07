@@ -18,21 +18,15 @@ import { createReceipt } from "@/lib/db-service"
 import { uploadReceiptImage } from "@/lib/storage-service"
 import { toast } from "sonner"
 import { UserNav } from "@/components/user-nav"
+import { ThemeToggle } from "@/components/theme-toggle"
+import { MobileNav } from "@/components/mobile-nav"
+import { MobileSettings } from "@/components/mobile-settings"
 
 interface Item {
   id: string
   name: string
   quantity: number
   price: number
-}
-
-interface Receipt {
-  id: string
-  merchant: string
-  date: string
-  items: Item[]
-  total: number
-  timestamp: Date
 }
 
 export default function DetectPage() {
@@ -44,7 +38,6 @@ export default function DetectPage() {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null)
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [items, setItems] = useState<Item[]>([])
-  const [receipts, setReceipts] = useState<Receipt[]>([])
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editValues, setEditValues] = useState<Item | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
@@ -54,7 +47,8 @@ export default function DetectPage() {
   const [isDragActive, setIsDragActive] = useState(false)
   const [saveImageToStorage, setSaveImageToStorage] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
-
+  const [isMobileSettingsOpen, setIsMobileSettingsOpen] = useState(false)
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false)
   useEffect(() => {
     if (!loading && !user) {
       router.push("/login")
@@ -187,30 +181,71 @@ export default function DetectPage() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-4">
-              <Link href="/">
-                <Button variant="ghost" size="icon" className="cursor-pointer">
-                  <ArrowLeft className="w-4 h-4" />
-                </Button>
-              </Link>
-              <h1 className="text-xl font-bold">{t.deteksi_struk_button}</h1>
-            </div>
-            <div className="flex gap-2">
-              <LanguageToggle />
-              <Link href="/revenue">
-                <Button variant="outline" className="bg-transparent text-xs sm:text-sm font-semibold hover:bg-accent! cursor-pointer transition-colors">
-                  {t.laporan}
-                </Button>
-              </Link>
-              <UserNav />
-            </div>
+      {/* ====================== UNIFIED NAVBAR ====================== */}
+<nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="flex items-center justify-between h-16">
+
+      {/* Left side – Logo + Title */}
+      <div className="flex items-center gap-3">
+        <Link href="/" className="flex items-center gap-3">
+          <div className="w-9 h-9 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
+            <span className="text-white font-bold text-lg">S</span>
           </div>
-        </div>
-      </nav>
+          <h1 className="text-xl font-bold hidden sm:block">Strukly</h1>
+        </Link>
+
+        {/* Page title on inner pages (Detect & Revenue) */}
+        {typeof window !== "undefined" && !window.location.pathname.includes("/detect") && !window.location.pathname.includes("/revenue") ? null : (
+          <h2 className="text-lg font-semibold sm:hidden">
+            {window.location.pathname.includes("/detect")
+              ? t.deteksi_struk_button
+              : t.laporan_pendapatan_title}
+          </h2>
+        )}
+      </div>
+
+      {/* Desktop Navigation */}
+      <div className="hidden sm:flex items-center gap-3">
+        
+
+        <LanguageToggle />
+        <ThemeToggle />
+        <Link href="/revenue">
+          <Button variant="outline" className="bg-transparent hover:bg-accent! hover:cursor-pointer">
+            {t.laporan}
+          </Button>
+        </Link>
+        {/* Logged-in user */}
+        {user ? (
+          <>
+            <UserNav />
+          </>
+        ) : (
+          <>
+            <Link href="/login">
+              <Button variant="outline" className="bg-transparent hover:bg-accent/50">
+                {t.masuk}
+              </Button>
+            </Link>
+            <Link href="/register">
+              <Button className="bg-primary hover:bg-primary/20! text-white">
+                {t.daftar}
+              </Button>
+            </Link>
+          </>
+        )}
+      </div>
+
+      {/* Mobile menu buttons */}
+      <div className="flex sm:hidden items-center gap-2">
+        <MobileSettings isOpen={isMobileSettingsOpen} setIsOpen={setIsMobileSettingsOpen} setNavOpen={setIsMobileNavOpen} />
+        <MobileNav isOpen={isMobileNavOpen} setIsOpen={setIsMobileNavOpen} setSettingsOpen={setIsMobileSettingsOpen} />
+      </div>
+    </div>
+  </div>
+</nav>
+{/* =========================================================== */}
 
       {/* Main Content */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

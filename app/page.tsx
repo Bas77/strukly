@@ -63,51 +63,76 @@ export default function HomePage() {
   return (
     <main className="min-h-screen bg-background">
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-background/10 backdrop-blur-sm border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14 sm:h-16">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm sm:text-lg">S</span>
-              </div>
-              <h1 className="text-lg sm:text-xl font-bold text-foreground">Strukly</h1>
-            </div>
-            
-            {/* Desktop Navigation */}
-            <div className="hidden sm:flex items-center gap-2 sm:gap-3">
-              <Link href="/revenue">
-                <Button variant="outline" className="bg-transparent text-xs sm:text-sm font-semibold hover:bg-accent! cursor-pointer transition-colors">
-                  {t.laporan}
-                </Button>
-              </Link>
-              <LanguageToggle />
-              <ThemeToggle />
-              {isLoggedIn ? (
-                <UserNav />
-              ) : (
-                <>
-                  <Link href="/login">
-                    <Button variant="outline" className="bg-transparent text-xs sm:text-sm hover:bg-accent! cursor-pointer">
-                      {t.masuk}
-                    </Button>
-                  </Link>
-                  <Link href="/register">
-                    <Button className="bg-primary hover:bg-primary/90 text-primary-foreground text-xs sm:text-sm py-1 sm:py-2 cursor-pointer">
-                      {t.daftar}
-                    </Button>
-                  </Link>
-                </>
-              )}
-            </div>
+      {/* ====================== UNIFIED NAVBAR ====================== */}
+<nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="flex items-center justify-between h-16">
 
-            {/* Mobile Navigation */}
-            <div className="sm:hidden flex items-center gap-2">
-              <MobileSettings isOpen={isMobileSettingsOpen} setIsOpen={setIsMobileSettingsOpen} setNavOpen={setIsMobileNavOpen} />
-              <MobileNav isOpen={isMobileNavOpen} setIsOpen={setIsMobileNavOpen} setSettingsOpen={setIsMobileSettingsOpen} />
-            </div>
+      {/* Left side – Logo + Title */}
+      <div className="flex items-center gap-3">
+        <Link href="/" className="flex items-center gap-3">
+          <div className="w-9 h-9 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
+            <span className="text-white font-bold text-lg">S</span>
           </div>
-        </div>
-      </nav>
+          <h1 className="text-xl font-bold hidden sm:block">Strukly</h1>
+        </Link>
+
+        {/* Page title on inner pages (Detect & Revenue) */}
+        {typeof window !== "undefined" && !window.location.pathname.includes("/detect") && !window.location.pathname.includes("/revenue") ? null : (
+          <h2 className="text-lg font-semibold sm:hidden">
+            {window.location.pathname.includes("/detect")
+              ? t.deteksi_struk_button
+              : t.laporan_pendapatan_title}
+          </h2>
+        )}
+      </div>
+
+      {/* Desktop Navigation */}
+      <div className="hidden sm:flex items-center gap-3">
+        <Link href="/revenue">
+          <Button variant="outline" className="bg-transparent hover:bg-accent! hover:cursor-pointer">
+            {t.laporan}
+          </Button>
+        </Link>
+
+        <LanguageToggle />
+        <ThemeToggle />
+
+        {/* Logged-in user */}
+        {user ? (
+          <>
+            <Link href="/detect">
+              <Button className="bg-primary hover:bg-primary/20! text-white hover:cursor-pointer">
+                {t.deteksi_struk_button}
+              </Button>
+            </Link>
+            <UserNav />
+          </>
+        ) : (
+          <>
+            <Link href="/login">
+              <Button variant="outline" className="bg-transparent hover:bg-accent/50 hover:cursor-pointer">
+                {t.masuk}
+              </Button>
+            </Link>
+            <Link href="/register">
+              <Button className="bg-primary hover:bg-primary/90 text-white">
+                {t.daftar}
+              </Button>
+            </Link>
+          </>
+        )}
+      </div>
+
+      {/* Mobile menu buttons */}
+      <div className="flex sm:hidden items-center gap-2">
+        <MobileSettings isOpen={isMobileSettingsOpen} setIsOpen={setIsMobileSettingsOpen} setNavOpen={setIsMobileNavOpen} />
+        <MobileNav isOpen={isMobileNavOpen} setIsOpen={setIsMobileNavOpen} setSettingsOpen={setIsMobileSettingsOpen} />
+      </div>
+    </div>
+  </div>
+</nav>
+{/* =========================================================== */}
 
       <motion.section
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12"
